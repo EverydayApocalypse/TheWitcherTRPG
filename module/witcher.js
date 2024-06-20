@@ -18,6 +18,7 @@ function updateDerived(actor) {
 	const base = Math.floor((stats.body.current + stats.will.current) / 2);
 	const baseMax = Math.floor((stats.body.max + stats.will.max) / 2);
 	const meleeBonus = Math.ceil((stats.body.current - 6) / 2) * 2;
+	
 
 	let intTotalModifiers = 0;
 	let refTotalModifiers = 0;
@@ -163,6 +164,7 @@ function updateDerived(actor) {
 	let isDead = false;
 	let isWounded = false;
 	let HPvalue = thisActor.system.derivedStats.hp.value;
+	let maxHP = thisActor.system.derivedStats.hp.unmodifiedMax;
 	if (HPvalue <= 0) {
 		isDead = true
 		curInt = Math.floor((thisActor.system.stats.int.max + intTotalModifiers) / 3 / intDivider)
@@ -181,8 +183,35 @@ function updateDerived(actor) {
 		curDex = Math.floor((thisActor.system.stats.dex.max + dexTotalModifiers - armorEnc - encDiff) / 2 / dexDivider)
 		curInt = Math.floor((thisActor.system.stats.int.max + intTotalModifiers) / 2 / intDivider)
 		curWill = Math.floor((thisActor.system.stats.will.max + willTotalModifiers) / 2 / willDivider)
+		curSpd = Math.floor((thisActor.system.stats.spd.max + spdTotalModifiers - encDiff) / 2 / spdDivider)		
 	}
+ 	else if (HPvalue <= maxHP * 0.25){
+		isWounded = true
+		curRef = Math.floor((thisActor.system.stats.ref.max + refTotalModifiers - armorEnc - encDiff) / refDivider - 3)
+		curDex = Math.floor((thisActor.system.stats.dex.max + dexTotalModifiers - armorEnc - encDiff) / dexDivider - 3)
+		curInt = Math.floor((thisActor.system.stats.int.max + intTotalModifiers) / intDivider - 3)
+		curWill = Math.floor((thisActor.system.stats.will.max + willTotalModifiers) / willDivider - 3)
+		curSpd = Math.floor((thisActor.system.stats.spd.max + spdTotalModifiers - encDiff) - 3)	
+	}
+ 	else if (HPvalue <= maxHP * 0.5){
+		isWounded = true
+		curRef = Math.floor((thisActor.system.stats.ref.max + refTotalModifiers - armorEnc - encDiff) / refDivider - 2)
+		curDex = Math.floor((thisActor.system.stats.dex.max + dexTotalModifiers - armorEnc - encDiff) / dexDivider - 2)
+		curInt = Math.floor((thisActor.system.stats.int.max + intTotalModifiers) / intDivider - 2)
+		curWill = Math.floor((thisActor.system.stats.will.max + willTotalModifiers) / willDivider - 2)
+		curSpd = Math.floor((thisActor.system.stats.spd.max + spdTotalModifiers - encDiff) - 2)		
+	}
+ 	else if (HPvalue <= maxHP * 0.75){
+		isWounded = true
+		curRef = Math.floor((thisActor.system.stats.ref.max + refTotalModifiers - armorEnc - encDiff) / refDivider - 1)
+		curDex = Math.floor((thisActor.system.stats.dex.max + dexTotalModifiers - armorEnc - encDiff) / dexDivider - 1)
+		curInt = Math.floor((thisActor.system.stats.int.max + intTotalModifiers) / intDivider - 1)
+		curWill = Math.floor((thisActor.system.stats.will.max + willTotalModifiers) / willDivider - 1)
+		curSpd = Math.floor((thisActor.system.stats.spd.max + spdTotalModifiers - encDiff) - 1)		
+	}		
+	
 
+	
 	let hpTotalModifiers = 0;
 	let staTotalModifiers = 0;
 	let resTotalModifiers = 0;
@@ -249,7 +278,7 @@ function updateDerived(actor) {
 		'system.coreStats.enc.max': stats.body.current * 10,
 
 		'system.coreStats.run.current': Math.floor((stats.spd.current * 3 + runTotalModifiers) / runDivider),
-		'system.coreStats.run.max': stats.spd.current * 3,
+		'system.coreStats.run.max': stats.spd.current * 2,
 
 		'system.coreStats.leap.current': Math.floor((stats.spd.current * 3 / 5) + leapTotalModifiers) / leapDivider,
 		'system.coreStats.leap.max': Math.floor(stats.spd.max * 3 / 5),
