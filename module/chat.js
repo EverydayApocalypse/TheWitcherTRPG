@@ -93,7 +93,7 @@ export async function rollDamage(img, name, damageFormula, location, locationFor
   }
 
   if (strike == "strong") {
-    damageFormula = `(${damageFormula})*2`;
+    damageFormula = `(${damageFormula})*1`;
     messageData.flavor += `<div>${game.i18n.localize("WITCHER.Dialog.strikeStrong")}</div>`;
   }
   messageData.flavor += `<div><b>${game.i18n.localize("WITCHER.Dialog.attackLocation")}:</b> ${location.alias} = ${locationFormula} </div>`;
