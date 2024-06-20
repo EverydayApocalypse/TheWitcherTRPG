@@ -31,7 +31,7 @@ export default class WitcherActorSheet extends ActorSheet {
     data.displayRep = game.settings.get("TheWitcherTRPG", "displayRep")
 
     data.config = CONFIG.witcher;
-    CONFIG.Combat.initiative.formula = !data.displayRollDetails ? "1d10 + @stats.ref.current" : "1d10 + @stats.ref.current[REF]";
+    CONFIG.Combat.initiative.formula = !data.displayRollDetails ? "1d10 + @stats.spd.current" : "1d10 + @stats.ref.current[REF]";
 
     let actor = data.actor;
     let items = actor.items;
@@ -1650,7 +1650,7 @@ export default class WitcherActorSheet extends ActorSheet {
               total_rec += 3;
             }
             if (healTent) {
-              console.log("Add Healing Tent Bonus");
+              console.log("Add Healing Tent/Bed Bonus");
               total_rec += 2;
             }
             //Update actor health
@@ -2250,9 +2250,12 @@ export default class WitcherActorSheet extends ActorSheet {
               });
             }
 
-            if (strike == "fast") {
-              attacknumber = 2;
-            }
+			if (strike == "fast") {
+                attacknumber = 2;
+				let newSta = this.actor.system.derivedStats.sta.value - 1;
+				this.actor.update({ 
+				'system.derivedStats.sta.value': newSta});
+              }
             for (let i = 0; i < attacknumber; i++) {
               let attFormula = "1d10"
               let damageFormula = formula;
@@ -2275,19 +2278,22 @@ export default class WitcherActorSheet extends ActorSheet {
               }
               if (isExtraAttack) {
                 attFormula += !displayRollDetails ? `-3` :
-                  `-3[${game.i18n.localize("WITCHER.Dialog.attackExtra")}]`;
+                  `-3[${game.i18n.localize("WITCHER.Dialog.attackExtra")}]`;				  
+				let newSta = this.actor.system.derivedStats.sta.value - 5;
+				this.actor.update({ 
+				'system.derivedStats.sta.value': newSta});
               }
               if (isFastDraw) {
                 attFormula += !displayRollDetails ? `-3` :
                   `-3[${game.i18n.localize("WITCHER.Dialog.attackIsFastDraw")}]`;
               }
               if (isProne) {
-                attFormula += !displayRollDetails ? `-2` :
-                  `-2[${game.i18n.localize("WITCHER.Dialog.attackIsProne")}]`;
+                attFormula += !displayRollDetails ? `-5` :
+                  `-5[${game.i18n.localize("WITCHER.Dialog.attackIsProne")}]`;
               }
               if (isPinned) {
-                attFormula += !displayRollDetails ? `+4` :
-                  `+4[${game.i18n.localize("WITCHER.Dialog.attackIsPinned")}]`;
+                attFormula += !displayRollDetails ? `+5` :
+                  `+5[${game.i18n.localize("WITCHER.Dialog.attackIsPinned")}]`;
               }
               if (isActivelyDodging) {
                 attFormula += !displayRollDetails ? `-2` :
@@ -2372,13 +2378,13 @@ export default class WitcherActorSheet extends ActorSheet {
                   attFormula = !displayRollDetails ? `${attFormula}+5` : `${attFormula}+5[${game.i18n.localize("WITCHER.Weapon.Range")}]`;
                   break;
                 case "medium":
-                  attFormula = !displayRollDetails ? `${attFormula}-2` : `${attFormula}-2[${game.i18n.localize("WITCHER.Weapon.Range")}]`;
-                  break;
-                case "long":
                   attFormula = !displayRollDetails ? `${attFormula}-4` : `${attFormula}-4[${game.i18n.localize("WITCHER.Weapon.Range")}]`;
                   break;
-                case "extreme":
+                case "long":
                   attFormula = !displayRollDetails ? `${attFormula}-6` : `${attFormula}-6[${game.i18n.localize("WITCHER.Weapon.Range")}]`;
+                  break;
+                case "extreme":
+                  attFormula = !displayRollDetails ? `${attFormula}-8` : `${attFormula}-8[${game.i18n.localize("WITCHER.Weapon.Range")}]`;
                   break;
               }
 
@@ -2391,9 +2397,26 @@ export default class WitcherActorSheet extends ActorSheet {
                 ? `${touchedLocation.modifier}`
                 : `${touchedLocation.modifier}[${touchedLocation.alias}]`;
 
-              if (strike == "joint" || strike == "strong") {
-                attFormula = !displayRollDetails ? `${attFormula}-3` : `${attFormula}-3[${game.i18n.localize("WITCHER.Dialog.attackStrike")}]`;
-              }
+              if (strike == "joint") {
+                attacknumber = 2;
+				let newSta = this.actor.system.derivedStats.sta.value - 2;
+				this.actor.update({ 
+				'system.derivedStats.sta.value': newSta});
+				attFormula = !displayRollDetails ? `${attFormula}-2`:  `${attFormula}-2[${game.i18n.localize("WITCHER.Dialog.attackStrike")}]`;
+              }	
+			  
+			  if (strike == "strong") {
+				let newSta = this.actor.system.derivedStats.sta.value - 3;
+				this.actor.update({ 
+				'system.derivedStats.sta.value': newSta});
+				attFormula = !displayRollDetails ? `${attFormula}-3`:  `${attFormula}-3[${game.i18n.localize("WITCHER.Dialog.attackStrike")}]`;
+              }		
+
+              if (strike == "normal") {
+				let newSta = this.actor.system.derivedStats.sta.value - 1;
+				this.actor.update({ 
+				'system.derivedStats.sta.value': newSta});
+              }															  
 
               attFormula = addModifiers(modifiers, attFormula)
 
