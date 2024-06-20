@@ -1,4 +1,4 @@
-# FoundryVTT system - The witcher TRPG#  test
+# FoundryVTT system - The witcher TRPG#
 
 ## Character Sheet ##
 This Sheet represent a Player character with all of it's stats
