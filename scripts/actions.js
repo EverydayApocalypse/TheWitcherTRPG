@@ -51,7 +51,9 @@ async function ApplyDamage(actor, dmgType, location, totalDamage) {
   }
   content += `<label>${game.i18n.localize("WITCHER.Damage.isVulnerable")}: <input type="checkbox" name="vulnerable"></label><br />
     <label>${game.i18n.localize("WITCHER.Damage.oilDmg")}: <input type="checkbox" name="oilDmg"></label><br />
-    <label>${game.i18n.localize("WITCHER.Damage.silverDmg")}: <select name="silverDmg">${silverOptions}</select></label><br />`
+    <label>${game.i18n.localize("WITCHER.Damage.silverDmg")}: <select name="silverDmg">${silverOptions}</select></label><br />
+	<label>${game.i18n.localize("WITCHER.Damage.isArmourPiercing")}: <input type="checkbox" name="armourPiercing"></label><br />
+	<label>${game.i18n.localize("WITCHER.Damage.isAdvArmourPiercing")}: <input type="checkbox" name="advArmourPiercing"></label><br />`																															 
 
   let cancel = true;
   let damageType = dmgType.capitalize();
@@ -61,6 +63,8 @@ async function ApplyDamage(actor, dmgType, location, totalDamage) {
   let isVulnerable = false;
   let addOilDmg = false;
   let silverDmg;
+  let armourPiercing = false;
+  let advArmourPiercing = false;							
 
   let infoTotalDmg = totalDamage
 
@@ -74,6 +78,8 @@ async function ApplyDamage(actor, dmgType, location, totalDamage) {
         isVulnerable = html.find("[name=vulnerable]").prop("checked");
         addOilDmg = html.find("[name=oilDmg]").prop("checked");
         silverDmg = html.find("[name=silverDmg]")[0].value;
+        armourPiercing = html.find("[name=armourPiercing]").prop("checked");	
+        advArmourPiercing = html.find("[name=advArmourPiercing]").prop("checked");																				 																					  
         cancel = false
       }]],
     title: game.i18n.localize("WITCHER.Context.applyDmg"),
@@ -186,6 +192,10 @@ async function ApplyDamage(actor, dmgType, location, totalDamage) {
     return
   }
 
+  //window.alert(totalSP);
+  if(armourPiercing) {totalSP = totalSP/2};
+  if(advArmourPiercing) {totalSP = 0};
+  //window.alert(totalSP);						  										   									 						  
   totalDamage -= totalSP < 0 ? 0 : totalSP;
 
   let infoAfterSPReduction = totalDamage < 0 ? 0 : totalDamage
@@ -478,14 +488,14 @@ function BlockAttack(actor) {
           if (item_id) {
             let item = actor.items.get(item_id);
             if (type == "Weapon") {
-              item.update({ 'system.reliable': item.system.reliable - 1 })
-              if (item.system.reliable - 1 <= 0) {
+              item.update({ 'system.reliable': item.system.reliable - 0 })
+              if (item.system.reliable - 0 <= 0) {
                 return ui.notifications.error(game.i18n.localize("WITCHER.Weapon.Broken"));
               }
             }
             else {
-              item.update({ 'system.reliability': item.system.reliability - 1 })
-              if (item.system.reliability - 1 <= 0) {
+              item.update({ 'system.reliability': item.system.reliability - 0 })
+              if (item.system.reliability - 0 <= 0) {
                 return ui.notifications.error(game.i18n.localize("WITCHER.Shield.Broken"));
               }
             }
@@ -527,7 +537,7 @@ function ExecuteDefence(actor, attackType, location, totalAttack) {
           let isExtraDefence = html.find("[name=isExtraDefense]").prop("checked");
           let customDef = html.find("[name=customDef]")[0].value;
           if (isExtraDefence) {
-            let newSta = actor.system.derivedStats.sta.value - 1
+            let newSta = actor.system.derivedStats.sta.value - 5
             if (newSta < 0) {
               return ui.notifications.error(game.i18n.localize("WITCHER.Spell.notEnoughSta"));
             }
